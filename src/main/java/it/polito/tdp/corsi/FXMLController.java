@@ -3,10 +3,15 @@
  */
 
 package it.polito.tdp.corsi;
+import java.util.*;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import it.polito.tdp.corsi.db.Corso;
+import it.polito.tdp.corsi.model.Divisione;
 import it.polito.tdp.corsi.model.Model;
+import it.polito.tdp.corsi.model.Studente;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -46,22 +51,74 @@ public class FXMLController {
 
     @FXML
     void corsiPerPeriodo(ActionEvent event) {
+    	String periodo = txtPeriodo.getText();
+    	int periodoNum;
+    	try {
+    		periodoNum = Integer.parseInt(periodo);
+    	}catch(NumberFormatException e) {
+    		txtRisultato.setText("inserisci un periodo numerico!");
+    		return;
+    	}
     	
+    	if(periodoNum<1 || periodoNum>2) {
+    		txtRisultato.setText("Inserisci 1 o 2");
+    		return;
+    	}
+    	List<Corso> corsi = this.model.getCorsiByPeriodo(periodoNum);
+    	for(Corso c : corsi) {
+    		txtRisultato.appendText(c+"\n");
+    	}
     }
 
     @FXML
     void numeroStudenti(ActionEvent event) {
-    	
+    	String periodo = txtPeriodo.getText();
+    	int periodoNum;
+    	try {
+    		periodoNum = Integer.parseInt(periodo);
+    	}catch(NumberFormatException e) {
+    		txtRisultato.setText("inserisci un periodo numerico!");
+    		return;
+    	}
+    	if(periodoNum<1 || periodoNum>2) {
+    		txtRisultato.setText("Inserisci 1 o 2");
+    		return;
+    	}
+    	Map<Corso, Integer> iscritti = this.model.getIscritti(periodoNum);
+    	for(Corso c : iscritti.keySet()) {
+    		txtRisultato.appendText(c + " " +iscritti.get(c) +"\n");
+    	}
     }
 
     @FXML
     void stampaDivisione(ActionEvent event) {
-
+    	String codins = txtCorso.getText();
+    	if(codins == null || codins.equals("")) {
+    		txtRisultato.appendText("inserisci codice corso");
+    		return;
+    	}
+    	for(Studente s : this.model.getStudentiByCorso(codins)) {
+    		txtRisultato.appendText(s+"\n");
+    	}
+    
+    	for(Divisione d : this.model.getDivisioneStudenti(codins)) {
+    		txtRisultato.appendText(d.getCDS()+"\t"+d.getN()+"\n");
+    	}
     }
 
     @FXML
     void stampaStudenti(ActionEvent event) {
-
+    	String codins = txtCorso.getText();
+    	if(codins == null || codins.equals("")) {
+    		txtRisultato.appendText("inserisci codice corso");
+    		return;
+    	}
+    	for(Studente s : this.model.getStudentiByCorso(codins)) {
+    		txtRisultato.appendText(s+"\n");
+    	}
+    	for (Studente s : this.model.getStudentiByCorso(codins)) {
+    		txtRisultato.appendText(s + "\n");
+    	}
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
